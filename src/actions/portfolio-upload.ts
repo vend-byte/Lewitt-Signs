@@ -2,6 +2,7 @@
 
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/require-admin'
 
 interface UploadedImage {
   url: string
@@ -18,6 +19,7 @@ export async function createPortfolioWithImages(data: {
   category?: string
   images: UploadedImage[]
 }) {
+  await requireAdmin()
   const portfolio = await db.portfolio.create({
     data: {
       title: data.title,

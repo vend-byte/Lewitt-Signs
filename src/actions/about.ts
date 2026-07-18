@@ -1,7 +1,8 @@
-'use server'
+﻿'use server'
 
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/require-admin'
 
 export async function getAbout() {
   try {
@@ -17,6 +18,7 @@ export async function updateAbout(data: {
   story?: string
   stats?: { value: number; suffix: string; label: string }[]
 }) {
+  await requireAdmin()
   const existing = await db.about.findFirst()
 
   const payload = {

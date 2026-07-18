@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { commentsRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function GET() {
   try {
@@ -24,11 +25,29 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request)
+    const { success, remaining } = await commentsRateLimit.limit(ip)
+
+    if (!success) {
+      return NextResponse.json(
+        { success: false, error: 'Too many reviews submitted. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
     const body = await request.json()
     const { authorName, email, message, rating, pageSlug } = body || {}
 
     if (!authorName || !message) {
       return NextResponse.json({ success: false, error: 'Name and review are required.' }, { status: 400 })
+    }
+
+    if (String(authorName).length > 100) {
+      return NextResponse.json({ success: false, error: 'Name is too long.' }, { status: 400 })
+    }
+
+    if (String(message).length > 2000) {
+      return NextResponse.json({ success: false, error: 'Review is too long.' }, { status: 400 })
     }
 
     const parsedRating = Number(rating)

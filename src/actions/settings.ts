@@ -1,7 +1,8 @@
-'use server'
+﻿'use server'
 
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/require-admin'
 import {
   DEFAULT_WHATSAPP,
   SETTINGS_DEFAULTS,
@@ -10,7 +11,7 @@ import {
 } from '@/lib/settings'
 
 // ---------------------------------------------------------------------------
-// Readers
+// Readers (public — needed by the live site)
 // ---------------------------------------------------------------------------
 
 export async function getWhatsAppSettings(): Promise<WhatsAppSettings> {
@@ -54,6 +55,7 @@ export async function saveSettings(
   entries: Record<string, string>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    await requireAdmin()
     await Promise.all(
       Object.entries(entries).map(([key, value]) =>
         db.setting.upsert({
@@ -74,6 +76,7 @@ export async function saveSettings(
   }
 }
 
+// Public — visitors subscribe themselves via the newsletter form
 export async function subscribeNewsletter(
   email: string
 ): Promise<{ success: boolean; error?: string }> {

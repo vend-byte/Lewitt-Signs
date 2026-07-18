@@ -1,10 +1,12 @@
-'use server'
+﻿'use server'
 
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { requireAdmin } from '@/lib/require-admin'
 
+// ============================================================
 // Services Actions
+// ============================================================
 export async function getServices() {
   return db.service.findMany({
     where: { deletedAt: null },
@@ -26,6 +28,7 @@ export async function createService(data: {
   order?: number
   status?: boolean
 }) {
+  await requireAdmin()
   const service = await db.service.create({
     data: {
       title: data.title,
@@ -36,7 +39,7 @@ export async function createService(data: {
       status: data.status ?? true,
     },
   })
-  
+
   revalidatePath('/admin/services')
   revalidatePath('/services')
   revalidatePath('/')
@@ -51,11 +54,12 @@ export async function updateService(id: string, data: {
   order?: number
   status?: boolean
 }) {
+  await requireAdmin()
   const service = await db.service.update({
     where: { id },
     data,
   })
-  
+
   revalidatePath('/admin/services')
   revalidatePath('/services')
   revalidatePath('/')
@@ -63,18 +67,19 @@ export async function updateService(id: string, data: {
 }
 
 export async function deleteService(id: string) {
-  // Soft delete
+  await requireAdmin()
   await db.service.update({
     where: { id },
     data: { deletedAt: new Date() },
   })
-  
+
   revalidatePath('/admin/services')
   revalidatePath('/services')
   revalidatePath('/')
 }
 
 export async function reorderServices(ids: string[]) {
+  await requireAdmin()
   await Promise.all(
     ids.map((id, index) =>
       db.service.update({
@@ -83,12 +88,14 @@ export async function reorderServices(ids: string[]) {
       })
     )
   )
-  
+
   revalidatePath('/admin/services')
   revalidatePath('/services')
 }
 
+// ============================================================
 // Portfolio Actions
+// ============================================================
 export async function getPortfolioItems() {
   return db.portfolio.findMany({
     where: { deletedAt: null },
@@ -112,6 +119,7 @@ export async function createPortfolio(data: {
   featured?: boolean
   order?: number
 }) {
+  await requireAdmin()
   const portfolio = await db.portfolio.create({
     data: {
       title: data.title,
@@ -122,7 +130,7 @@ export async function createPortfolio(data: {
       order: data.order ?? 0,
     },
   })
-  
+
   revalidatePath('/admin/portfolio')
   revalidatePath('/portfolio')
   revalidatePath('/')
@@ -137,11 +145,12 @@ export async function updatePortfolio(id: string, data: {
   featured?: boolean
   order?: number
 }) {
+  await requireAdmin()
   const portfolio = await db.portfolio.update({
     where: { id },
     data,
   })
-  
+
   revalidatePath('/admin/portfolio')
   revalidatePath('/portfolio')
   revalidatePath('/')
@@ -149,23 +158,28 @@ export async function updatePortfolio(id: string, data: {
 }
 
 export async function deletePortfolio(id: string) {
+  await requireAdmin()
   await db.portfolio.update({
     where: { id },
     data: { deletedAt: new Date() },
   })
-  
+
   revalidatePath('/admin/portfolio')
   revalidatePath('/portfolio')
   revalidatePath('/')
 }
 
+// ============================================================
 // Contact Message Actions
+// ============================================================
 export async function getContactMessages() {
+  await requireAdmin()
   return db.contactMessage.findMany({
     orderBy: { createdAt: 'desc' },
   })
 }
 
+// Public — submitted by website visitors via the contact form
 export async function createContactMessage(data: {
   fullName: string
   email: string
@@ -191,6 +205,7 @@ export async function createContactMessage(data: {
 }
 
 export async function updateContactMessageStatus(id: string, status: string) {
+  await requireAdmin()
   await db.contactMessage.update({
     where: { id },
     data: { status },
@@ -200,11 +215,14 @@ export async function updateContactMessageStatus(id: string, status: string) {
 }
 
 export async function deleteContactMessage(id: string) {
+  await requireAdmin()
   await db.contactMessage.delete({ where: { id } })
   revalidatePath('/admin/contacts')
 }
 
+// ============================================================
 // Settings Actions
+// ============================================================
 export async function getSetting(key: string) {
   const setting = await db.setting.findUnique({
     where: { key },
@@ -216,7 +234,7 @@ export async function getSettings(group?: string) {
   const settings = await db.setting.findMany({
     where: group ? { group } : undefined,
   })
-  
+
   return settings.reduce((acc, setting) => {
     acc[setting.key] = setting.value
     return acc
@@ -224,16 +242,18 @@ export async function getSettings(group?: string) {
 }
 
 export async function updateSetting(key: string, value: string) {
+  await requireAdmin()
   await db.setting.upsert({
     where: { key },
     update: { value },
     create: { key, value, group: 'general' },
   })
-  
+
   revalidatePath('/admin/settings')
 }
 
 export async function updateSettings(settings: Record<string, string>) {
+  await requireAdmin()
   await Promise.all(
     Object.entries(settings).map(([key, value]) =>
       db.setting.upsert({
@@ -243,11 +263,13 @@ export async function updateSettings(settings: Record<string, string>) {
       })
     )
   )
-  
+
   revalidatePath('/admin/settings')
 }
 
+// ============================================================
 // Hero Actions
+// ============================================================
 export async function getHero() {
   return db.hero.findFirst()
 }
@@ -263,8 +285,9 @@ export async function updateHero(data: {
   backgroundVideo?: string | null
   overlayOpacity?: number
 }) {
+  await requireAdmin()
   const hero = await db.hero.findFirst()
-  
+
   if (hero) {
     return db.hero.update({
       where: { id: hero.id },
@@ -275,7 +298,9 @@ export async function updateHero(data: {
   }
 }
 
+// ============================================================
 // Testimonial Actions
+// ============================================================
 export async function getTestimonials() {
   return db.testimonial.findMany({
     where: { deletedAt: null },
@@ -292,6 +317,7 @@ export async function createTestimonial(data: {
   rating?: number
   order?: number
 }) {
+  await requireAdmin()
   const testimonial = await db.testimonial.create({
     data: {
       clientName: data.clientName,
@@ -303,7 +329,7 @@ export async function createTestimonial(data: {
       order: data.order ?? 0,
     },
   })
-  
+
   revalidatePath('/admin/testimonials')
   revalidatePath('/testimonials')
   revalidatePath('/')
@@ -319,11 +345,12 @@ export async function updateTestimonial(id: string, data: {
   rating?: number
   order?: number
 }) {
+  await requireAdmin()
   const testimonial = await db.testimonial.update({
     where: { id },
     data,
   })
-  
+
   revalidatePath('/admin/testimonials')
   revalidatePath('/testimonials')
   revalidatePath('/')
@@ -331,17 +358,20 @@ export async function updateTestimonial(id: string, data: {
 }
 
 export async function deleteTestimonial(id: string) {
+  await requireAdmin()
   await db.testimonial.update({
     where: { id },
     data: { deletedAt: new Date() },
   })
-  
+
   revalidatePath('/admin/testimonials')
   revalidatePath('/testimonials')
   revalidatePath('/')
 }
 
+// ============================================================
 // FAQ Actions
+// ============================================================
 export async function getFAQs() {
   return db.fAQ.findMany({
     where: { deletedAt: null },
@@ -355,6 +385,7 @@ export async function createFAQ(data: {
   order?: number
   status?: boolean
 }) {
+  await requireAdmin()
   const faq = await db.fAQ.create({
     data: {
       question: data.question,
@@ -363,7 +394,7 @@ export async function createFAQ(data: {
       status: data.status ?? true,
     },
   })
-  
+
   revalidatePath('/admin/faq')
   revalidatePath('/faq')
   revalidatePath('/')
@@ -376,11 +407,12 @@ export async function updateFAQ(id: string, data: {
   order?: number
   status?: boolean
 }) {
+  await requireAdmin()
   const faq = await db.fAQ.update({
     where: { id },
     data,
   })
-  
+
   revalidatePath('/admin/faq')
   revalidatePath('/faq')
   revalidatePath('/')
@@ -388,17 +420,20 @@ export async function updateFAQ(id: string, data: {
 }
 
 export async function deleteFAQ(id: string) {
+  await requireAdmin()
   await db.fAQ.update({
     where: { id },
     data: { deletedAt: new Date() },
   })
-  
+
   revalidatePath('/admin/faq')
   revalidatePath('/faq')
   revalidatePath('/')
 }
 
+// ============================================================
 // Blog Actions
+// ============================================================
 export async function getBlogs() {
   return db.blog.findMany({
     where: { deletedAt: null },
@@ -427,6 +462,7 @@ export async function createBlog(data: {
   seoTitle?: string
   seoDescription?: string
 }) {
+  await requireAdmin()
   const blog = await db.blog.create({
     data: {
       title: data.title,
@@ -443,7 +479,7 @@ export async function createBlog(data: {
       publishedAt: data.status === 'PUBLISHED' ? new Date() : null,
     },
   })
-  
+
   revalidatePath('/admin/blog')
   revalidatePath('/blog')
   revalidatePath('/')
@@ -462,16 +498,17 @@ export async function updateBlog(id: string, data: {
   seoTitle?: string
   seoDescription?: string
 }) {
+  await requireAdmin()
   const updateData: any = { ...data }
   if (data.status === 'PUBLISHED') {
     updateData.publishedAt = new Date()
   }
-  
+
   const blog = await db.blog.update({
     where: { id },
     data: updateData,
   })
-  
+
   revalidatePath('/admin/blog')
   revalidatePath('/blog')
   revalidatePath('/')
@@ -479,17 +516,20 @@ export async function updateBlog(id: string, data: {
 }
 
 export async function deleteBlog(id: string) {
+  await requireAdmin()
   await db.blog.update({
     where: { id },
     data: { deletedAt: new Date() },
   })
-  
+
   revalidatePath('/admin/blog')
   revalidatePath('/blog')
   revalidatePath('/')
 }
 
+// ============================================================
 // Pricing Plan Actions
+// ============================================================
 export async function getPricingPlans() {
   return db.pricingPlan.findMany({
     where: { deletedAt: null },
@@ -506,6 +546,7 @@ export async function createPricingPlan(data: {
   order?: number
   status?: boolean
 }) {
+  await requireAdmin()
   const plan = await db.pricingPlan.create({
     data: {
       name: data.name,
@@ -517,7 +558,7 @@ export async function createPricingPlan(data: {
       status: data.status ?? true,
     },
   })
-  
+
   revalidatePath('/admin/pricing')
   revalidatePath('/pricing')
   revalidatePath('/')
@@ -533,11 +574,12 @@ export async function updatePricingPlan(id: string, data: {
   order?: number
   status?: boolean
 }) {
+  await requireAdmin()
   const plan = await db.pricingPlan.update({
     where: { id },
     data,
   })
-  
+
   revalidatePath('/admin/pricing')
   revalidatePath('/pricing')
   revalidatePath('/')
@@ -545,11 +587,12 @@ export async function updatePricingPlan(id: string, data: {
 }
 
 export async function deletePricingPlan(id: string) {
+  await requireAdmin()
   await db.pricingPlan.update({
     where: { id },
     data: { deletedAt: new Date() },
   })
-  
+
   revalidatePath('/admin/pricing')
   revalidatePath('/pricing')
   revalidatePath('/')
