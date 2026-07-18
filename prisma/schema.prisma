@@ -1,0 +1,415 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+// User & Authentication
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  avatar        String?
+  role          RoleType   @default(EDITOR)
+  lastLogin     DateTime?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  blogs       Blog[]
+  logs        SystemLog[]
+
+  @@index([email])
+  @@index([deletedAt])
+}
+
+enum RoleType {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+// Settings
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general")
+  type      String   @default("string")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
+  @@index([key])
+}
+
+// Languages & Translations
+model Language {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nativeName  String?
+  direction   String   @default("ltr")
+  status      Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  translations Translation[]
+}
+
+model Translation {
+  id          String   @id @default(cuid())
+  languageId  String
+  key         String
+  value       String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([languageId, key])
+  @@index([languageId])
+}
+
+// Hero Section
+model Hero {
+  id              String   @id @default(cuid())
+  title           String   @db.Text
+  subtitle        String?  @db.Text
+  primaryButton   String?
+  primaryButtonLink String?
+  secondaryButton String?
+  secondaryButtonLink String?
+  backgroundImage String?
+  backgroundVideo String?
+  overlayOpacity  Float    @default(0.5)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Services
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  icon        String?
+  image       String?
+  order       Int      @default(0)
+  status      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  
+  @@index([order])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+// Portfolio
+model Portfolio {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  category    String?
+  services    String[] @default([])
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  images PortfolioImage[]
+
+  @@index([category])
+  @@index([featured])
+  @@index([order])
+  @@index([deletedAt])
+}
+
+model PortfolioImage {
+  id          String   @id @default(cuid())
+  portfolioId String
+  url         String
+  publicId    String?
+  width       Int?
+  height      Int?
+  format      String?
+  bytes       Int?
+  alt         String?
+  createdAt   DateTime @default(now())
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+// Media Library
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  publicId  String?
+  width     Int?
+  height    Int?
+  format    String?
+  bytes     Int?
+  folder    String?
+  createdAt DateTime @default(now())
+
+  @@index([folder])
+  @@index([publicId])
+}
+
+// Blog
+model Blog {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  content      String?    @db.Text
+  excerpt      String?    @db.Text
+  featuredImage String?
+  status       BlogStatus @default(DRAFT)
+  publishedAt  DateTime?
+  authorId     String?
+  categoryId   String?
+  tags         String[]
+  seoTitle     String?
+  seoDescription String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  author   User?      @relation(fields: [authorId], references: [id])
+  category Category?   @relation(fields: [categoryId], references: [id])
+  
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([deletedAt])
+  @@index([authorId])
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blogs Blog[]
+  
+  @@index([slug])
+}
+
+// Pricing
+model PricingPlan {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  price       Decimal? @db.Decimal(10, 2)
+  currency    String   @default("USD")
+  features    Json     @default("[]")
+  order       Int      @default(0)
+  status      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@index([order])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+// Testimonials
+model Testimonial {
+  id         String   @id @default(cuid())
+  clientName String
+  company    String?
+  position   String?
+  photo      String?
+  review     String   @db.Text
+  rating     Int      @default(5)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+
+  @@index([order])
+  @@index([deletedAt])
+}
+
+// FAQ
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  order     Int      @default(0)
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([order])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+// Public Comments / Reviews
+model Comment {
+  id           String        @id @default(cuid())
+  authorName   String
+  email        String?
+  message      String        @db.Text
+  rating       Int           @default(5)
+  status       CommentStatus @default(APPROVED)
+  pageSlug     String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  approvedAt   DateTime?
+
+  @@index([status])
+  @@index([pageSlug])
+  @@index([createdAt])
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SPAM
+  DELETED
+}
+
+// Contact Messages
+model ContactMessage {
+  id            String   @id @default(cuid())
+  fullName      String
+  email         String
+  phone         String?
+  companyName   String?
+  subject       String
+  message       String   @db.Text
+  status        String   @default("NEW")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Contact Info
+model Contact {
+  id        String   @id @default(cuid())
+  type      String
+  value     String
+  label     String?
+  icon      String?
+  order     Int      @default(0)
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([order])
+}
+
+// About Page
+model About {
+  id          String   @id @default(cuid())
+  mission     String?  @db.Text
+  vision      String?  @db.Text
+  story       String?  @db.Text
+  stats       Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Footer
+model Footer {
+  id          String   @id @default(cuid())
+  section     String
+  content     String   @db.Text
+  order       Int      @default(0)
+  status      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([section])
+  @@index([order])
+}
+
+// System Logs
+model SystemLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// Backups
+model Backup {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("manual")
+  fileName    String?
+  size        Int?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+
+  @@index([type])
+  @@index([createdAt])
+}
+
+// Newsletter Subscribers
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// Analytics Events
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  event     String
+  properties Json?
+  visitorId String?
+  ipAddress String?
+  userAgent String?
+  country   String?
+  city      String?
+  device    String?
+  browser   String?
+  os        String?
+  referrer  String?
+  createdAt DateTime @default(now())
+
+  @@index([event])
+  @@index([visitorId])
+  @@index([createdAt])
+  @@index([country])
+}

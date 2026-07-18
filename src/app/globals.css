@@ -1,0 +1,405 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-white font-sans antialiased;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-card/70 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass-hover {
+    @apply hover:bg-card-hover/80 hover:border-primary/30 transition-all duration-200;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-cta bg-clip-text text-transparent;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+           bg-cta text-background font-semibold rounded-md
+           hover:bg-cta-dark transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-cta/50 focus:ring-offset-2 focus:ring-offset-background
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+           bg-transparent text-white font-semibold rounded-md
+           border border-white/20
+           hover:bg-white/10 hover:border-primary transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           text-muted font-medium rounded-md
+           hover:bg-white/5 hover:text-white transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-card rounded-lg border border-white/5 p-6;
+  }
+
+  .card-hover {
+    @apply card hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 bg-input border border-white/10 rounded-md
+           text-white placeholder:text-muted
+           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary
+           transition-all duration-200;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-muted mb-2;
+  }
+
+  .section {
+    @apply py-20 md:py-24 lg:py-32;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .heading-1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+
+  .heading-2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+
+  .heading-3 {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight;
+  }
+
+  .heading-4 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-white to-cta bg-clip-text text-transparent;
+  }
+
+  /* --------------------------------------------------------------
+     LEWITT SIGNS brand wordmark
+  -------------------------------------------------------------- */
+  .logo-wrap {
+    @apply inline-flex items-center gap-3 shrink-0;
+  }
+
+  .logo-mark {
+    @apply shrink-0 transition-transform duration-200;
+  }
+
+  .logo-sm .logo-mark { width: 34px; height: 34px; }
+  .logo-md .logo-mark { width: 42px; height: 42px; }
+  .logo-lg .logo-mark { width: 50px; height: 50px; }
+
+  .logo-wordmark {
+    font-family: 'Archivo Black', 'Inter', sans-serif;
+    @apply inline-flex items-center leading-none select-none whitespace-nowrap;
+    letter-spacing: 0.03em;
+  }
+
+  .logo-sm .logo-wordmark { font-size: 1.05rem; }
+  .logo-md .logo-wordmark { font-size: 1.4rem; }
+  .logo-lg .logo-wordmark { font-size: 1.65rem; }
+
+  .logo-word-lewitt {
+    color: #ffffff;
+    text-shadow: 0 0 22px rgba(0, 240, 255, 0.22);
+    transition: text-shadow 200ms ease;
+  }
+
+  /* Slanted geometric divider - the custom "cut" */
+  .logo-divider {
+    @apply inline-block rounded-full;
+    width: 3px;
+    height: 0.82em;
+    margin: 0 0.5em;
+    background: linear-gradient(180deg, #00f0ff, #0e9dff);
+    transform: skewX(-16deg);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.55);
+  }
+
+  .logo-word-signs {
+    background: linear-gradient(115deg, #00f0ff 15%, #4dd7ff 55%, #0e9dff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.4));
+    transition: filter 200ms ease;
+  }
+
+  .logo-wrap:hover .logo-mark {
+    transform: scale(1.05);
+  }
+
+  .logo-wrap:hover .logo-word-lewitt {
+    text-shadow: 0 0 30px rgba(0, 240, 255, 0.45);
+  }
+
+  .logo-wrap:hover .logo-word-signs {
+    filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.65));
+  }
+
+  /* --------------------------------------------------------------
+     Floating WhatsApp button
+  -------------------------------------------------------------- */
+  .wa-float {
+    --wa-color: #25d366;
+    position: fixed;
+    bottom: calc(25px + env(safe-area-inset-bottom, 0px));
+    z-index: 60;
+    width: 56px;
+    height: 56px;
+    border-radius: 9999px;
+    background-color: var(--wa-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45), 0 3px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+  }
+
+  .wa-right { right: calc(25px + env(safe-area-inset-right, 0px)); }
+  .wa-left { left: calc(25px + env(safe-area-inset-left, 0px)); }
+
+  .wa-float:hover {
+    transform: scale(1.1);
+  }
+
+  .wa-icon {
+    width: 30px;
+    height: 30px;
+    color: #ffffff;
+  }
+
+  /* Infinite pulse ring */
+  .wa-pulse::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--wa-color);
+    opacity: 0.45;
+    z-index: -1;
+    animation: wa-pulse 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  /* Soft glow */
+  .wa-glow {
+    filter: drop-shadow(0 0 10px rgba(37, 211, 102, 0.45));
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--wa-color) 45%, transparent));
+  }
+
+  .wa-glow:hover {
+    filter: drop-shadow(0 0 18px rgba(37, 211, 102, 0.7));
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--wa-color) 70%, transparent));
+  }
+
+  /* Tooltip */
+  .wa-tooltip {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .wa-right .wa-tooltip { right: calc(100% + 14px); }
+  .wa-left .wa-tooltip { left: calc(100% + 14px); }
+
+  .wa-float:hover .wa-tooltip { opacity: 1; }
+
+  @media (max-width: 768px) {
+    .wa-tooltip { display: none; }
+    .wa-float { width: 52px; height: 52px; }
+    .wa-icon { width: 27px; height: 27px; }
+  }
+
+  /* Navigation links */
+  .nav-link {
+    @apply relative text-muted hover:text-white transition-colors duration-200
+           after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5
+           after:bg-primary after:transition-all after:duration-200 after:rounded-full
+           hover:after:w-full;
+  }
+
+  .nav-link-active {
+    @apply text-white after:w-full;
+  }
+
+  /* Skeleton */
+  .skeleton {
+    @apply bg-card animate-pulse rounded;
+  }
+
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    @apply absolute inset-0 bg-shimmer bg-[length:200%_100%];
+    animation: shimmer 2s linear infinite;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Keyframes */
+@keyframes wa-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  70% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #283548;
+}
+
+/* ===== Premium Hero Styles ===== */
+
+@layer utilities {
+  /* Premium Glass Effect */
+  .glass-premium {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Gradient Text with Animation */
+  .text-gradient {
+    background: linear-gradient(135deg, #00F0FF 0%, #E4FF00 50%, #00F0FF 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 4s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+}
+
+/* Extra small screens (under 400px) */
+@media (max-width: 399px) {
+  .container-custom {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
+
+/* xs breakpoint for trust indicators */
+@media (min-width: 400px) {
+  .xs\\:inline-block {
+    display: inline-block !important;
+  }
+}
+
+/* ===== End Premium Hero Styles ===== */
