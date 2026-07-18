@@ -1,7 +1,7 @@
 // Shared settings constants & types (safe to import from anywhere)
 
 export const DEFAULT_WHATSAPP = {
-  number: '254712345678',
+  number: '254795109943',
   enabled: true,
   color: '#25D366',
   position: 'bottom-right' as 'bottom-right' | 'bottom-left',
@@ -48,7 +48,7 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   'website.enableAnimations': 'true',
   'website.enableBackToTop': 'true',
   // Contact
-  'contact.phone': '+254 712 345 678',
+  'contact.phone': '0795109943',
   'contact.secondaryPhone': '',
   'contact.email': 'info@lewittsigns.com',
   'contact.supportEmail': 'support@lewittsigns.com',

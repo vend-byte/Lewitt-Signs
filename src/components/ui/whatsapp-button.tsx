@@ -45,7 +45,7 @@ export function WhatsAppButton({
 
   return (
     <a
-      href={`https://wa.me/${clean}`}
+      href={`https://wa.me/${clean}?text=${encodeURIComponent("Hi Lewitt Signs, I'd like to know more about your services.")}`}
       target={newTab ? '_blank' : undefined}
       rel={newTab ? 'noopener noreferrer' : undefined}
       aria-label="Chat with us on WhatsApp"

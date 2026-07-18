@@ -226,7 +226,7 @@ export function SettingsForm({ initial }: { initial: Record<string, string> }) {
                 label="WhatsApp Number"
                 value={get('whatsapp.number')}
                 onChange={(v) => set('whatsapp.number', v)}
-                placeholder="254712345678"
+                placeholder="254795109943"
                 hint="International format, digits only. Opens https://wa.me/{number}"
               />
               <ColorField

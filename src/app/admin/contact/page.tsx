@@ -16,7 +16,7 @@ export default async function ContactAdminPage() {
       </div>
 
       <div className="card p-6 space-y-3 text-sm text-muted">
-        <p><span className="text-white">Phone:</span> {settings['contact.phone'] || '+254 712 345 678'}</p>
+        <p><span className="text-white">Phone:</span> {settings['contact.phone'] || '0795109943'}</p>
         <p><span className="text-white">Email:</span> {settings['contact.email'] || 'info@lewittsigns.com'}</p>
         <p><span className="text-white">Address:</span> {settings['contact.address'] || 'Kimathi Street, Nairobi, Kenya'}</p>
         <p><span className="text-white">Hours:</span> {settings['contact.hours'] || 'Mon - Sat: 8:00 AM - 6:00 PM'}</p>

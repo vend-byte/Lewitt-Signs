@@ -81,7 +81,7 @@ interface NavigationProps {
 }
 
 export function Navigation({
-  phoneNumber = '+254 712 345 678',
+  phoneNumber = '0795109943',
   whatsappNumber,
   email = 'info@lewittsigns.com',
   address = 'Kimathi Street, Nairobi, Kenya',
@@ -221,7 +221,7 @@ export function Navigation({
               </a>
 
               <a
-                href={`https://wa.me/${displayWhatsApp}`}
+                href={`https://wa.me/${displayWhatsApp}?text=${encodeURIComponent("Hi Lewitt Signs, I'd like to know more about your services.")}`}
                 aria-label="WhatsApp us"
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.18)] transition-all duration-200 hover:scale-105"
               >
@@ -362,7 +362,7 @@ export function Navigation({
                     Call Now
                   </a>
                   <a
-                    href={`https://wa.me/${displayWhatsApp}`}
+                    href={`https://wa.me/${displayWhatsApp}?text=${encodeURIComponent("Hi Lewitt Signs, I'd like to know more about your services.")}`}
                     className="flex items-center justify-center gap-2 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-300 transition-all duration-200 hover:scale-[1.02]"
                     style={{ minHeight: '44px' }}
                   >
@@ -396,7 +396,7 @@ export function Navigation({
                       <Phone className="h-4 w-4" />
                       {phoneNumber}
                     </a>
-                    <a href={`https://wa.me/${displayWhatsApp}`} className="flex items-center gap-2 text-white/90 hover:text-primary">
+                    <a href={`https://wa.me/${displayWhatsApp}?text=${encodeURIComponent("Hi Lewitt Signs, I'd like to know more about your services.")}`} className="flex items-center gap-2 text-white/90 hover:text-primary">
                       <WhatsAppIcon className="h-4 w-4" />
                       {whatsappNumber || phoneNumber}
                     </a>
